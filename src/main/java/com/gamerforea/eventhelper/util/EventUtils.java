@@ -147,6 +147,6 @@ public final class EventUtils
 
 	private static final void err(String format, Object... args)
 	{
-		System.err.println(String.format(format, args));
+		EventHelper.logger.error(String.format(format, args));
 	}
 }

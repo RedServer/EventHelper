@@ -18,10 +18,13 @@ import com.google.common.collect.Lists;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
+import org.apache.logging.log4j.Logger;
+import org.bukkit.plugin.Plugin;
 
 @SideOnly(Side.SERVER)
 @Mod(modid = "EventHelper", name = "EventHelper", version = "@VERSION@", acceptableRemoteVersions = "*")
@@ -31,6 +34,12 @@ public final class EventHelper
 	public static final List<RegisteredListener> listeners = Lists.newArrayList();
 	public static String craftPackage = Bukkit.getServer().getClass().getPackage().getName();
 	public static boolean debug = false;
+	public static Logger logger;
+
+	@EventHandler
+	public final void preInit(FMLPreInitializationEvent event) {
+		logger = event.getModLog();
+	}
 
 	@EventHandler
 	public final void serverStarted(FMLServerStartedEvent event)
@@ -44,8 +53,14 @@ public final class EventHelper
 		PluginManager plManager = Bukkit.getPluginManager();
 		for (String plName : plugins)
 			listeners.addAll(HandlerList.getRegisteredListeners(plManager.getPlugin(plName)));
-		if (wgHooking)
-			WGReflection.setWG(plManager.getPlugin("WorldGuard"));
+		if (wgHooking) {
+			Plugin wg = plManager.getPlugin("WorldGuard");
+			if(wg != null) {
+				WGReflection.setWG(wg);
+			} else {
+				logger.warn("WorldGuard plugin not found!");
+			}
+		}
 	}
 
 	public static final void callEvent(Event event)
