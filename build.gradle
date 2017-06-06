@@ -24,6 +24,8 @@ repositories {
 apply plugin: 'forge'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
 
 version = "1.8"
 group= "com.gamerforea"
