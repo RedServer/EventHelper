@@ -32,7 +32,7 @@ public final class EventHelper
 {
 	public static final File cfgDir = new File(Loader.instance().getConfigDir(), "Events");
 	public static final List<RegisteredListener> listeners = Lists.newArrayList();
-	public static String craftPackage = Bukkit.getServer().getClass().getPackage().getName();
+	public static String craftPackage;
 	public static boolean debug = false;
 	public static Logger logger;
 
@@ -44,6 +44,7 @@ public final class EventHelper
 	@EventHandler
 	public final void serverStarted(FMLServerStartedEvent event)
 	{
+		craftPackage = Bukkit.getServer().getClass().getPackage().getName();
 		Configuration cfg = FastUtils.getConfig("EventHelper");
 		String[] plugins = cfg.getStringList("plugins", CATEGORY_GENERAL, new String[] { "WorldGuard" }, "Plugins for sending events");
 		boolean wgHooking = cfg.getBoolean("wgHooking", CATEGORY_GENERAL, true, "Hooking WorldGuard plugin (allow checking regions)");
