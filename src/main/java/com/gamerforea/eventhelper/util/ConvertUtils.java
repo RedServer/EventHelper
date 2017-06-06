@@ -67,7 +67,7 @@ public final class ConvertUtils
 			getBukkitEntity = Entity.class.getDeclaredMethod("getBukkitEntity");
 			getBukkitEntity.setAccessible(true);
 
-			asCraftMirror = CraftUtils.getCraftClass("inventory/CraftItemStack").getDeclaredMethod("asCraftMirror", ItemStack.class);
+			asCraftMirror = CraftUtils.getCraftClass("inventory.CraftItemStack").getDeclaredMethod("asCraftMirror", ItemStack.class);
 			asCraftMirror.setAccessible(true);
 		}
 		catch (Throwable throwable)

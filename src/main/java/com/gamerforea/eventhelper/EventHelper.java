@@ -29,7 +29,7 @@ public final class EventHelper
 {
 	public static final File cfgDir = new File(Loader.instance().getConfigDir(), "Events");
 	public static final List<RegisteredListener> listeners = Lists.newArrayList();
-	public static String craftPackage = "org/bukkit/craftbukkit/v1_7_R4";
+	public static String craftPackage = Bukkit.getServer().getClass().getPackage().getName();
 	public static boolean debug = false;
 
 	@EventHandler
@@ -38,7 +38,6 @@ public final class EventHelper
 		Configuration cfg = FastUtils.getConfig("EventHelper");
 		String[] plugins = cfg.getStringList("plugins", CATEGORY_GENERAL, new String[] { "WorldGuard" }, "Plugins for sending events");
 		boolean wgHooking = cfg.getBoolean("wgHooking", CATEGORY_GENERAL, true, "Hooking WorldGuard plugin (allow checking regions)");
-		craftPackage = cfg.getString("craftPackage", CATEGORY_GENERAL, craftPackage, "CraftBukkit package (for reflection)");
 		debug = cfg.getBoolean("debug", CATEGORY_GENERAL, debug, "Debugging enabled");
 		cfg.save();
 
