@@ -1,44 +1,16 @@
 package com.gamerforea.eventhelper.wg;
 
-import java.lang.reflect.Method;
-
+import com.sk89q.worldguard.bukkit.RegionQuery;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import org.bukkit.Location;
 import org.bukkit.World;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+public final class WGRegionChecker {
 
-public final class WGRegionChecker
-{
-	private static final Method isInPrivate;
+	private static final RegionQuery query = ((WorldGuardPlugin)WGReflection.getWGPlugin()).getRegionContainer().createQuery();
 
-	public static final boolean isInPrivate(World world, int x, int y, int z) throws Throwable
-	{
-		return (Boolean) isInPrivate.invoke(null, world, x, y, z);
+	public static final boolean isInPrivate(World world, int x, int y, int z) throws Throwable {
+		return query.getApplicableRegions(new Location(world, x, y, z)).size() > 0;
 	}
 
-	static
-	{
-		try
-		{
-			Class<?> clazz = WGReflection.injectIntoWG(WGRegionChecker.class);
-			isInPrivate = clazz.getDeclaredMethod("isInPrivateInj", World.class, int.class, int.class, int.class);
-			isInPrivate.setAccessible(true);
-		}
-		catch (Throwable throwable)
-		{
-			throw new RuntimeException("Failed injecting WGRegionChecker$Inj.isInPrivateInj() method!", throwable);
-		}
-	}
-
-	public static final class Inj
-	{
-		public static final Boolean isInPrivateInj(World world, int x, int y, int z)
-		{
-			for (ProtectedRegion region : WorldGuardPlugin.inst().getRegionManager(world).getApplicableRegions(new Vector(x, y, z)))
-				if (!region.getId().equals(ProtectedRegion.GLOBAL_REGION))
-					return true;
-			return false;
-		}
-	}
 }
