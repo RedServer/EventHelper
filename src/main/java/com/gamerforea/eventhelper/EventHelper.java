@@ -1,20 +1,10 @@
 package com.gamerforea.eventhelper;
 
-import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
-
 import java.io.File;
 import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredListener;
-
 import com.gamerforea.eventhelper.util.FastUtils;
 import com.gamerforea.eventhelper.wg.WGReflection;
 import com.google.common.collect.Lists;
-
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -23,8 +13,14 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredListener;
 
 @SideOnly(Side.SERVER)
 @Mod(modid = "EventHelper", name = "EventHelper", version = "@VERSION@", acceptableRemoteVersions = "*")
@@ -33,7 +29,6 @@ public final class EventHelper
 	public static final File cfgDir = new File(Loader.instance().getConfigDir(), "Events");
 	public static final List<RegisteredListener> listeners = Lists.newArrayList();
 	public static String craftPackage;
-	public static boolean debug = false;
 	public static Logger logger;
 
 	@EventHandler
@@ -46,9 +41,8 @@ public final class EventHelper
 	{
 		craftPackage = Bukkit.getServer().getClass().getPackage().getName();
 		Configuration cfg = FastUtils.getConfig("EventHelper");
-		String[] plugins = cfg.getStringList("plugins", CATEGORY_GENERAL, new String[] { "WorldGuard" }, "Plugins for sending events");
-		boolean wgHooking = cfg.getBoolean("wgHooking", CATEGORY_GENERAL, true, "Hooking WorldGuard plugin (allow checking regions)");
-		debug = cfg.getBoolean("debug", CATEGORY_GENERAL, debug, "Debugging enabled");
+		String[] plugins = cfg.getStringList("plugins", Configuration.CATEGORY_GENERAL, new String[] { "WorldGuard" }, "Plugins for sending events");
+		boolean wgHooking = cfg.getBoolean("wgHooking", Configuration.CATEGORY_GENERAL, true, "Hooking WorldGuard plugin (allow checking regions)");
 		cfg.save();
 
 		PluginManager plManager = Bukkit.getPluginManager();
@@ -64,17 +58,13 @@ public final class EventHelper
 		}
 	}
 
-	public static final void callEvent(Event event)
-	{
-		for (RegisteredListener listener : listeners)
-			try
-			{
+	public static void callEvent(Event event) {
+		for(RegisteredListener listener : listeners) {
+			try {
 				listener.callEvent(event);
+			} catch (Throwable ex) {
+				logger.log(Level.ERROR, "Error calling '" + listener + "' listener", ex);
 			}
-			catch (Throwable throwable)
-			{
-				if (debug)
-					throwable.printStackTrace();
-			}
+		}
 	}
 }
