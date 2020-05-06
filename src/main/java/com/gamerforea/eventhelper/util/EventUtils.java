@@ -1,7 +1,8 @@
 package com.gamerforea.eventhelper.util;
 
 import com.gamerforea.eventhelper.EventHelper;
-import com.gamerforea.eventhelper.wg.WGRegionChecker;
+import com.gamerforea.eventhelper.wg.IRegionChecker;
+import com.gamerforea.eventhelper.wg.WGReflection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -89,7 +90,9 @@ public final class EventUtils {
 
 	public static boolean isInPrivate(World world, int x, int y, int z) {
 		try {
-			return WGRegionChecker.isInPrivate(toBukkitWorld(world), x, y, z);
+			IRegionChecker checker = WGReflection.getRegionChecker();
+			if(checker == null) return false; // No plugin
+			return checker.isInPrivate(toBukkitWorld(world), x, y, z);
 		} catch (Throwable e) {
 			EventHelper.logger.log(Level.ERROR, String.format("Failed to check WG region: [World: %s, X: %d, Y: %d, Z: %d]", world.getWorldInfo().getWorldName(), x, y, z), e);
 			return true;
