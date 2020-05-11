@@ -24,31 +24,44 @@ import org.bukkit.plugin.RegisteredListener;
 
 @SideOnly(Side.SERVER)
 @Mod(modid = "EventHelper", name = "EventHelper", version = "@VERSION@", acceptableRemoteVersions = "*")
-public final class EventHelper
-{
+public final class EventHelper {
+
 	public static final File cfgDir = new File(Loader.instance().getConfigDir(), "Events");
 	public static final List<RegisteredListener> listeners = Lists.newArrayList();
 	public static String craftPackage;
 	public static Logger logger;
 
 	@EventHandler
-	public final void preInit(FMLPreInitializationEvent event) {
+	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
 	}
 
 	@EventHandler
-	public final void serverStarted(FMLServerStartedEvent event)
-	{
+	public void serverStarted(FMLServerStartedEvent event) {
 		craftPackage = Bukkit.getServer().getClass().getPackage().getName();
+
+		/* Load config */
 		Configuration cfg = FastUtils.getConfig("EventHelper");
-		String[] plugins = cfg.getStringList("plugins", Configuration.CATEGORY_GENERAL, new String[] { "WorldGuard" }, "Plugins for sending events");
+		String[] plugins = cfg.getStringList("plugins", Configuration.CATEGORY_GENERAL, new String[]{"WorldGuard"}, "Plugins for sending events");
 		boolean wgHooking = cfg.getBoolean("wgHooking", Configuration.CATEGORY_GENERAL, true, "Hooking WorldGuard plugin (allow checking regions)");
 		cfg.save();
 
+		/* Listeners */
 		PluginManager plManager = Bukkit.getPluginManager();
-		for (String plName : plugins)
-			listeners.addAll(HandlerList.getRegisteredListeners(plManager.getPlugin(plName)));
-		if (wgHooking) {
+		for(String plName : plugins) {
+			Plugin plugin = plManager.getPlugin(plName);
+
+			if(plugin == null) {
+				logger.error("Plugin not found: " + plugin);
+				continue;
+			}
+
+			listeners.addAll(HandlerList.getRegisteredListeners(plugin));
+		}
+		logger.info("Handled " + listeners.size() + " plugin listeners");
+
+		/* WorldGuard */
+		if(wgHooking) {
 			Plugin wg = plManager.getPlugin("WorldGuard");
 			if(wg != null) {
 				WGReflection.setWG(wg);
