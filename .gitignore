@@ -1,5 +1,17 @@
+# Gradle
+/.gradle
 /build
+
+# IDEA
 /.idea
+/out
+
 /.gradle
 /.nb-gradle/
 
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+.LSOverride

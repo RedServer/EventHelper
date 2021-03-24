@@ -3,7 +3,7 @@ buildscript {
 		mavenCentral()
 		maven {
 			name = "forge"
-			url = "http://files.minecraftforge.net/maven"
+			url = "https://files.minecraftforge.net/maven"
 		}
 	}
 	dependencies {
@@ -19,8 +19,8 @@ repositories {
 
 apply plugin: 'forge'
 
-targetCompatibility = '1.8'
-sourceCompatibility = '1.8'
+targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 version = "1.8"
 group = "com.gamerforea"
@@ -37,9 +37,9 @@ minecraft {
 }
 
 dependencies {
-	compile name: 'bukkit-1.7.10'
-	compile name: 'worldedit-6.1'
-	compile name: 'worldguard-6.1'
+	compile name: 'bukkit', version: '1.7.10'
+	compile name: 'worldedit', version: '6.1'
+	compile name: 'worldguard', version: '6.1'
 }
 
 task devJar(type: Jar) {
