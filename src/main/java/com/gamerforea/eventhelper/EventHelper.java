@@ -34,7 +34,7 @@ public final class EventHelper
 	public static final Logger LOGGER = LogManager.getLogger("EventHelper");
 	public static final File cfgDir = new File(Loader.instance().getConfigDir(), "Events");
 	public static final List<RegisteredListener> listeners = Lists.newArrayList();
-	public static String craftPackage = "org.bukkit.craftbukkit.v1_7_R4";
+	public static String craftPackage;
 	public static boolean explosions = true;
 	public static boolean debug = true;
 
@@ -51,7 +51,7 @@ public final class EventHelper
 		String c = CATEGORY_GENERAL;
 		String[] plugins = cfg.getStringList("plugins", c, new String[] { "WorldGuard", "GriefPreventionPlus" }, "Plugins for sending events");
 		boolean pluginHooking = cfg.getBoolean("pluginHooking", c, true, "Hooking plugins (allow checking regions)");
-		craftPackage = cfg.getString("craftPackage", c, craftPackage, "CraftBukkit package (for reflection)");
+		craftPackage = Bukkit.getServer().getClass().getPackage().getName(); // TheAndrey: Automatic package detection
 		explosions = cfg.getBoolean("explosions", c, explosions, "Explosions enabled");
 		debug = cfg.getBoolean("debug", c, debug, "Debugging enabled");
 		cfg.save();
