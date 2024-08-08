@@ -79,17 +79,13 @@ public final class EventHelper
 			}
 			catch (Throwable throwable)
 			{
-				if (debug)
-					LOGGER.error("Failed event call", throwable);
+				LOGGER.error(new FormattedMessage("Failed {} call", event.getClass().getSimpleName()), throwable);
 			}
 		}
 	}
 
 	public static void error(Throwable throwable, String message, Object... args)
 	{
-		if (debug)
-			LOGGER.error(new FormattedMessage(message, args), throwable);
-		else
-			LOGGER.error(message, args);
+		LOGGER.error(new FormattedMessage(message, args), throwable);
 	}
 }
