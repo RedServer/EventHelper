@@ -37,7 +37,7 @@ ij_java_spaces_within_array_initializer_braces = true
 trim_trailing_whitespace = false
 ij_properties_keep_blank_lines = true
 
-[*.{json, info, mcmeta}]
+[*.{json,info,mcmeta,yml,yaml}]
 indent_style = space
 indent_size = 2
 
