@@ -31,9 +31,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed call break block event: [Player: {}, Pos: {}]", player, pos);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed call break block event: [Player: {}, Pos: {}]", player, pos, throwable);
 			return true;
 		}
 	}
@@ -47,9 +45,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed call place block event: [Player: {}, Pos: {}, Block State: {}]", player, pos, blockState);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed call place block event: [Player: {}, Pos: {}, BlockState: {}]", player, pos, blockState, throwable);
 			return true;
 		}
 	}
@@ -63,9 +59,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed call replace block event: [Player: {}, Pos: {}, Block State: {}]", player, pos, blockState);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed call replace block event: [Player: {}, Pos: {}, BlockState: {}]", player, pos, blockState, throwable);
 			return true;
 		}
 	}
@@ -78,9 +72,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed call attack entity event: [Player: {}, Victim: {}]", player, victim);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed call attack entity event: [Player: {}, Victim: {}]", player, victim, throwable);
 			return true;
 		}
 	}
@@ -95,9 +87,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed call interact event: [Player: {}, Hand: {}, Pos: {}, Side: {}]", player, hand, targetPos, targetSide);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed call interact event: [Player: {}, Hand: {}, Pos: {}, Side: {}]", player, hand, targetPos, targetSide, throwable);
 			return true;
 		}
 	}
@@ -113,9 +103,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed call interact event: [Player: {}, Hand: {}, Pos: {}, Side: {}]", player, hand, targetPos, targetSide);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed call interact event: [Player: {}, Hand: {}, Pos: {}, Side: {}]", player, hand, targetPos, targetSide, throwable);
 			return true;
 		}
 	}
@@ -128,9 +116,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed call interact event: [Player: {}, Params: {}]", player, params);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed call interact event: [Player: {}, Params: {}]", player, params, throwable);
 			return true;
 		}
 	}
@@ -143,9 +129,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed checking permission: [Player: {}, Permission: {}]", player, permission);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed checking permission: [Player: {}, Permission: {}]", player, permission, throwable);
 			return false;
 		}
 	}
@@ -158,9 +142,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed checking permission: [Player name: {}, Permission: {}]", playerId, permission);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed checking permission: [Player name: {}, Permission: {}]", playerId, permission, throwable);
 			return false;
 		}
 	}
@@ -173,9 +155,7 @@ public final class EventUtils
 		}
 		catch (Throwable throwable)
 		{
-			LOGGER.error("Failed checking permission: [Player UUID: {}, Permission: {}]", playerName, permission);
-			if (EventHelperMod.debug)
-				throwable.printStackTrace();
+			LOGGER.error("Failed checking permission: [Player UUID: {}, Permission: {}]", playerName, permission, throwable);
 			return false;
 		}
 	}
