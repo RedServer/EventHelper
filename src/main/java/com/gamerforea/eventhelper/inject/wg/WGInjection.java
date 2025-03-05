@@ -1,5 +1,6 @@
 package com.gamerforea.eventhelper.inject.wg;
 
+import com.gamerforea.eventhelper.EventHelper;
 import com.gamerforea.eventhelper.inject.PluginInjection;
 import com.gamerforea.eventhelper.util.InjectionUtils;
 import com.sk89q.worldguard.bukkit.RegionQuery;
@@ -18,9 +19,9 @@ public final class WGInjection
 			{
 				return (PluginInjection) clazz.newInstance();
 			}
-			catch (Throwable throwable)
+			catch (Throwable t)
 			{
-				throwable.printStackTrace();
+				EventHelper.LOGGER.error("Failed to initialize plugin integration", t);
 			}
 		return null;
 	}

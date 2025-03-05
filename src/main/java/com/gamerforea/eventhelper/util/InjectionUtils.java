@@ -1,5 +1,6 @@
 package com.gamerforea.eventhelper.util;
 
+import com.gamerforea.eventhelper.EventHelper;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -23,9 +24,9 @@ public final class InjectionUtils
 			byte[] bytes = ByteStreams.toByteArray(in);
 			return (Class<?>) defineClass.invoke(plugin.getClass().getClassLoader(), null, bytes, 0, bytes.length);
 		}
-		catch (Throwable throwable)
+		catch (Throwable t)
 		{
-			throwable.printStackTrace();
+			EventHelper.LOGGER.error("Failed to inject class " + clazz, t);
 			return null;
 		}
 	}

@@ -1,5 +1,6 @@
 package com.gamerforea.eventhelper.inject.gpp;
 
+import com.gamerforea.eventhelper.EventHelper;
 import com.gamerforea.eventhelper.inject.PluginInjection;
 import com.gamerforea.eventhelper.util.InjectionUtils;
 import net.kaikk.mc.gpp.Claim;
@@ -18,9 +19,9 @@ public final class GPPInjection
 			{
 				return (PluginInjection) clazz.newInstance();
 			}
-			catch (Throwable throwable)
+			catch (Throwable t)
 			{
-				throwable.printStackTrace();
+				EventHelper.LOGGER.error("Failed to initialize plugin integration", t);
 			}
 		return null;
 	}

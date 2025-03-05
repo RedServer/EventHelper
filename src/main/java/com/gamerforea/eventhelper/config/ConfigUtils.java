@@ -214,7 +214,7 @@ public final class ConfigUtils
 					}
 					catch (IllegalArgumentException e)
 					{
-						e.printStackTrace();
+						EventHelper.LOGGER.error("Enum value " + valueName + " not found in " + defaultValue.getDeclaringClass(), e);
 					}
 				}
 				else if (annotationType == ConfigStringCollection.class)
