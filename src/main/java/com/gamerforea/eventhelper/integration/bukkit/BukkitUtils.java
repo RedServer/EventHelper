@@ -1,37 +1,43 @@
 package com.gamerforea.eventhelper.integration.bukkit;
 
-import com.gamerforea.eventhelper.EventHelperMod;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import org.bukkit.Bukkit;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.Objects;
 
 public final class BukkitUtils
 {
-	private static final Method getBukkitEntity;
+	private static final String craftPackage;
+	private static final MethodHandle getBukkitEntity;
 
-	@Nonnull
-	public static Player getPlayer(@Nonnull EntityPlayer player)
+	@Nullable
+	public static Player getPlayer(@Nullable EntityPlayer player)
 	{
 		return (Player) getEntity(player);
 	}
 
-	@Nonnull
-	public static org.bukkit.entity.Entity getEntity(@Nonnull Entity entity)
+	@Nullable
+	public static org.bukkit.entity.Entity getEntity(@Nullable Entity entity)
 	{
+		if (entity == null)
+			return null; // TheAndrey: null -> null
+
 		try
 		{
-			return (org.bukkit.entity.Entity) Objects.requireNonNull(getBukkitEntity.invoke(entity), "Entity.getBukkitEntity() result must not be null");
+			return (org.bukkit.entity.Entity) getBukkitEntity.bindTo(entity).invoke();
 		}
-		catch (IllegalAccessException | InvocationTargetException e)
+		catch (Throwable e)
 		{
-			throw new RuntimeException(e);
+			throw new RuntimeException("Unable to invoke getBukkitEntity() on " + entity, e);
 		}
 	}
 
@@ -59,16 +65,25 @@ public final class BukkitUtils
 
 	static
 	{
-		Method getBukkitEntityMethod = null;
+		craftPackage = Objects.requireNonNull(Bukkit.getServer(), "CraftServer is null")
+				.getClass().getPackage().getName(); // TheAndrey: Automatic package detection
+
 		try
 		{
-			getBukkitEntityMethod = Entity.class.getDeclaredMethod("getBukkitEntity");
-			getBukkitEntityMethod.setAccessible(true);
+			// TheAndrey: Use MethodHandles
+			MethodHandles.Lookup lookup = MethodHandles.publicLookup();
+			Class<?> craftEntity = getCraftClass("entity.CraftEntity");
+
+			getBukkitEntity = lookup.findVirtual(Entity.class, "getBukkitEntity", MethodType.methodType(craftEntity));
 		}
 		catch (Throwable throwable)
 		{
-			EventHelperMod.LOGGER.warn("Failed hooking CraftBukkit methods", throwable);
+			throw new RuntimeException("Failed hooking CraftBukkit methods!", throwable);
 		}
-		getBukkitEntity = getBukkitEntityMethod;
+	}
+
+	public static Class<?> getCraftClass(String name) throws ClassNotFoundException
+	{
+		return Class.forName(craftPackage + '.' + name);
 	}
 }
