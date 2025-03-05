@@ -45,16 +45,18 @@ public final class EventHelper
 	}
 
 	@EventHandler
-	public final void serverStarted(FMLServerStartedEvent event)
+	public void serverStarted(FMLServerStartedEvent event)
 	{
 		Configuration cfg = ConfigUtils.getConfig("EventHelper");
 		String c = CATEGORY_GENERAL;
 		String[] plugins = cfg.getStringList("plugins", c, new String[] { "WorldGuard", "GriefPreventionPlus" }, "Plugins for sending events");
 		boolean pluginHooking = cfg.getBoolean("pluginHooking", c, true, "Hooking plugins (allow checking regions)");
-		craftPackage = Bukkit.getServer().getClass().getPackage().getName(); // TheAndrey: Automatic package detection
 		explosions = cfg.getBoolean("explosions", c, explosions, "Explosions enabled");
 		debug = cfg.getBoolean("debug", c, debug, "Debugging enabled");
 		cfg.save();
+
+		craftPackage = Bukkit.getServer().getClass().getPackage().getName(); // TheAndrey: Automatic package detection
+		LOGGER.debug("CraftBukkit package is: {}", craftPackage);
 
 		PluginManager plManager = Bukkit.getPluginManager();
 		for (String plName : plugins)
