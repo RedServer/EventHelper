@@ -8,10 +8,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -21,6 +23,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.gamerforea.eventhelper.integration.bukkit.BukkitUtils.*;
@@ -73,7 +76,7 @@ public final class BukkitIntegration
 		@Override
 		public boolean cantBreak(@Nonnull EntityPlayer player, @Nonnull BlockPos pos)
 		{
-			Player bukkitPlayer = getPlayer(player);
+			Player bukkitPlayer = getPlayer(Objects.requireNonNull(player, "player"));
 			Block block = bukkitPlayer.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
 			BlockBreakEvent event = new BlockBreakEvent(block, bukkitPlayer);
 			Bukkit.getPluginManager().callEvent(event);
@@ -83,15 +86,40 @@ public final class BukkitIntegration
 		@Override
 		public boolean cantPlace(@Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState blockState)
 		{
-			// TODO Make correct implementation
-			return this.cantBreak(player, pos);
+			Player bukkitPlayer = getPlayer(Objects.requireNonNull(player, "player"));
+			Block bukkitBlock = bukkitPlayer.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+			org.bukkit.inventory.ItemStack item;
+			EquipmentSlot equipmentSlot;
+
+			if (player.getActiveHand() == EnumHand.OFF_HAND)
+			{
+				item = bukkitPlayer.getInventory().getItemInOffHand();
+				equipmentSlot = EquipmentSlot.OFF_HAND;
+			}
+			else
+			{
+				item = bukkitPlayer.getInventory().getItemInMainHand();
+				equipmentSlot = EquipmentSlot.HAND;
+			}
+
+			net.minecraft.block.Block newBlock = Objects.requireNonNull(blockState, "blockState").getBlock();
+			FakeBlock placed = new FakeBlock(bukkitBlock, Material.getMaterial(net.minecraft.block.Block.getIdFromBlock(newBlock)), (byte) newBlock.getMetaFromState(blockState));
+
+			BlockPlaceEvent event = new BlockPlaceEvent(placed, bukkitBlock.getState(), bukkitBlock/*.getRelative(BlockFace.SELF)*/, item, bukkitPlayer, true, equipmentSlot);
+			Bukkit.getPluginManager().callEvent(event);
+			return event.isCancelled();
 		}
 
 		@Override
 		public boolean cantReplace(@Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState blockState)
 		{
-			// TODO Make correct implementation
-			return this.cantBreak(player, pos);
+			// NOTE: Bukkit doesn't have a suitable event, so we use a combination of two events.
+			if (cantBreak(player, pos))
+				return true;
+			if (cantPlace(player, pos, blockState))
+				return true;
+
+			return false;
 		}
 
 		@Override
